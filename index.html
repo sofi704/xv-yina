@@ -8,158 +8,245 @@
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;height:100%;overflow:hidden}
 body{
-  background:radial-gradient(circle,#8c1225 0%,#450713 48%,#150106 100%);
-  display:flex;align-items:center;justify-content:center;
-  font-family:Georgia,serif;
+  background:#160106;
+  font-family:Georgia,"Times New Roman",serif;
+  -webkit-tap-highlight-color:transparent;
 }
-.scene{position:relative;width:100vw;height:100dvh;display:flex;align-items:center;justify-content:center;perspective:2200px}
+.scene{
+  position:relative;width:100vw;height:100dvh;
+  display:flex;align-items:center;justify-content:center;
+  perspective:2200px;overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 45%,#8e1427 0%,#4a0714 45%,#160106 100%);
+}
+.glow{
+  position:absolute;width:95vmin;height:95vmin;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,195,90,.18),transparent 68%);
+  filter:blur(12px);
+}
 .book{
   position:relative;width:min(94vw,560px);height:min(92vh,840px);
-  transform-style:preserve-3d;transform-origin:left center;
-  filter:drop-shadow(0 28px 40px rgba(0,0,0,.75));
-  z-index:5;
-  transition:transform 1.45s cubic-bezier(.65,.02,.18,1),opacity .3s;
-}
-.book img{width:100%;height:100%;object-fit:contain;display:block;backface-visibility:hidden}
-.book.open{
-  transform:rotateY(-105deg) translateX(-16%);
-}
-.book::after{
-  content:"";
-  position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(105deg,transparent 35%,rgba(255,225,140,.45) 50%,transparent 65%);
-  opacity:0;
-}
-.book.open::after{animation:shine 1s ease}
-@keyframes shine{
-  0%{opacity:0;transform:translateX(-45%)}
-  35%{opacity:1}
-  100%{opacity:0;transform:translateX(45%)}
-}
-
-.open-btn{
-  position:absolute;
-  left:50%;bottom:10%;
-  transform:translateX(-50%);
-  z-index:20;
-  border:1px solid rgba(255,222,145,.9);
-  border-radius:999px;
-  padding:14px 28px;
-  background:linear-gradient(180deg,#a91c32,#650718);
-  color:#ffe8ad;
-  font:700 15px Arial,sans-serif;
-  letter-spacing:.14em;
-  box-shadow:0 8px 25px rgba(0,0,0,.5),inset 0 0 12px rgba(255,220,120,.15);
-  cursor:pointer;
-  touch-action:manipulation;
-}
-.open-btn:active{transform:translateX(-50%) scale(.96)}
-.open-btn.hide{opacity:0;pointer-events:none;transition:.2s}
-
-.pages{
-  position:absolute;
-  width:min(94vw,560px);height:min(92vh,840px);
   transform-style:preserve-3d;
-  z-index:4;
-  opacity:0;
-  pointer-events:none;
+  filter:drop-shadow(0 30px 42px rgba(0,0,0,.75));
 }
-.page{
+
+/* The open-book stage. The spine stays fixed while the right-hand
+   pages turn around the spine, just like a real book. */
+.openbook{
   position:absolute;inset:0;
-  background:linear-gradient(135deg,#8e1028,#5f0719 55%,#a31932);
-  border:3px solid #e6bd62;
-  box-shadow:inset 0 0 35px rgba(255,200,80,.22),0 15px 30px rgba(0,0,0,.55);
-  transform-origin:left center;
   transform-style:preserve-3d;
+  opacity:0;pointer-events:none;
 }
-.page:before{
+.openbook .half{
+  position:absolute;top:0;width:50%;height:100%;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 45%,#a91631 0%,#700a20 63%,#4c0614 100%);
+  border:2px solid #d7aa55;
+  box-shadow:inset 0 0 28px rgba(255,211,120,.18);
+}
+.left-static{left:0;border-radius:6px 0 0 6px}
+.right-static{left:50%;border-radius:0 6px 6px 0}
+
+.half:before{
   content:"";
   position:absolute;inset:3%;
-  border:2px solid rgba(255,218,132,.8);
+  border:1.5px solid rgba(255,218,135,.78);
+  box-shadow:inset 0 0 24px rgba(255,205,100,.10);
 }
-.page:after{
+.half:after{
   content:"✦     ❦     ✦";
   position:absolute;left:0;right:0;top:50%;
-  text-align:center;color:#f4cf79;font-size:34px;
-  text-shadow:0 0 15px rgba(255,190,70,.7);
-}
-.pages.show{opacity:1}
-.pages.show .p1{animation:flip .42s .05s both}
-.pages.show .p2{animation:flip .42s .30s both}
-.pages.show .p3{animation:flip .42s .55s both}
-.pages.show .p4{animation:flip .42s .80s both}
-.pages.show .p5{animation:flip .42s 1.05s both}
-.pages.show .p6{animation:flip .42s 1.30s both}
-@keyframes flip{
-  0%{transform:rotateY(0deg)}
-  45%{transform:rotateY(-95deg)}
-  100%{transform:rotateY(-179deg)}
+  transform:translateY(-50%);
+  text-align:center;color:rgba(255,220,140,.72);
+  font-size:25px;letter-spacing:.32em;
 }
 
+/* Decorative corners on the visible pages */
+.corner{
+  position:absolute;width:28%;height:22%;
+  border-color:#e9c46b;border-style:solid;opacity:.75;
+}
+.c1{top:4%;left:4%;border-width:2px 0 0 2px}
+.c2{top:4%;right:4%;border-width:2px 2px 0 0}
+.c3{bottom:4%;left:4%;border-width:0 0 2px 2px}
+.c4{bottom:4%;right:4%;border-width:0 2px 2px 0}
+
+.spine{
+  position:absolute;left:49.25%;top:-1%;width:1.5%;height:102%;
+  background:linear-gradient(90deg,#30030d,#d09b43 42%,#4b0716 60%,#26020a);
+  box-shadow:0 0 15px rgba(0,0,0,.65);
+  z-index:50;
+}
+
+/* Each page is ONLY the right half and pivots from the spine. */
+.turn-page{
+  position:absolute;left:50%;top:0;width:50%;height:100%;
+  transform-origin:left center;
+  transform-style:preserve-3d;
+  z-index:30;
+  border:2px solid #d7aa55;
+  border-left:0;
+  background:
+    radial-gradient(circle at 48% 45%,#b41b38 0%,#790b21 65%,#4e0615 100%);
+  box-shadow:8px 0 18px rgba(0,0,0,.30),inset 0 0 25px rgba(255,210,120,.16);
+  backface-visibility:hidden;
+}
+.turn-page:before{
+  content:"";
+  position:absolute;inset:5%;
+  border:1.5px solid rgba(255,220,140,.78);
+}
+.turn-page:after{
+  content:"❦";
+  position:absolute;left:0;right:0;top:50%;
+  transform:translateY(-50%);
+  text-align:center;color:#f3cd78;font-size:30px;
+  text-shadow:0 0 12px rgba(255,190,70,.6);
+}
+
+/* alternating page shades make each sheet visually distinct */
+.turn-page:nth-child(2){filter:brightness(.92)}
+.turn-page:nth-child(3){filter:brightness(1.03)}
+.turn-page:nth-child(4){filter:brightness(.88)}
+.turn-page:nth-child(5){filter:brightness(1.02)}
+.turn-page:nth-child(6){filter:brightness(.9)}
+.turn-page:nth-child(7){filter:brightness(1.04)}
+.turn-page:nth-child(8){filter:brightness(.91)}
+
+.cover{
+  position:absolute;inset:0;z-index:100;
+  transform-origin:left center;
+  transform-style:preserve-3d;
+  transition:transform 1.25s cubic-bezier(.7,.02,.18,1),opacity .2s;
+  backface-visibility:hidden;
+}
+.cover img{width:100%;height:100%;object-fit:contain;display:block}
+.cover.open{transform:rotateY(-92deg);opacity:0}
+
+.openbook.show{opacity:1}
+.openbook.turning .turn-page.p1{animation:pageTurn .62s cubic-bezier(.62,.05,.28,.98) .05s both}
+.openbook.turning .turn-page.p2{animation:pageTurn .62s cubic-bezier(.62,.05,.28,.98) .32s both}
+.openbook.turning .turn-page.p3{animation:pageTurn .62s cubic-bezier(.62,.05,.28,.98) .59s both}
+.openbook.turning .turn-page.p4{animation:pageTurn .62s cubic-bezier(.62,.05,.28,.98) .86s both}
+.openbook.turning .turn-page.p5{animation:pageTurn .62s cubic-bezier(.62,.05,.28,.98) 1.13s both}
+.openbook.turning .turn-page.p6{animation:pageTurn .62s cubic-bezier(.62,.05,.28,.98) 1.40s both}
+.openbook.turning .turn-page.p7{animation:pageTurn .62s cubic-bezier(.62,.05,.28,.98) 1.67s both}
+.openbook.turning .turn-page.p8{animation:pageTurn .62s cubic-bezier(.62,.05,.28,.98) 1.94s both}
+
+@keyframes pageTurn{
+  0%{
+    transform:rotateY(0deg);
+    box-shadow:8px 0 18px rgba(0,0,0,.32),inset 0 0 25px rgba(255,210,120,.16);
+  }
+  42%{
+    transform:rotateY(-92deg);
+    box-shadow:-4px 0 25px rgba(0,0,0,.42),inset 0 0 25px rgba(255,210,120,.12);
+  }
+  100%{
+    transform:rotateY(-180deg);
+    box-shadow:-10px 0 16px rgba(0,0,0,.18),inset 0 0 25px rgba(255,210,120,.10);
+  }
+}
+
+/* final interior is shown after the page-turning sequence */
 .final{
-  position:fixed;inset:0;z-index:1;opacity:0;
-  transition:opacity .5s;
+  position:fixed;inset:0;z-index:1;
+  opacity:0;transition:opacity .5s ease;
+  pointer-events:none;
 }
 .final img{width:100%;height:100%;object-fit:cover}
 .final.show{opacity:1}
 
+.open-button{
+  position:absolute;z-index:200;left:50%;bottom:9%;
+  transform:translateX(-50%);
+  border:1px solid #f1cd79;border-radius:999px;
+  padding:13px 27px;
+  background:linear-gradient(180deg,#a71932,#620716);
+  color:#ffe9ad;font:700 14px Arial,sans-serif;
+  letter-spacing:.15em;box-shadow:0 8px 24px rgba(0,0,0,.55);
+  cursor:pointer;touch-action:manipulation;
+}
+.open-button.hide{opacity:0;pointer-events:none;transition:.2s}
+
 @media(max-width:430px){
-  .book,.pages{width:96vw;height:94dvh}
+  .book{width:96vw;height:94dvh}
+}
+@media(max-height:650px){
+  .book{width:86vw;height:92dvh}
 }
 </style>
 </head>
 <body>
 <div class="scene">
-  <div class="final" id="final">
-    <img src="paginas-rojas-yina.png" alt="Páginas rojas y doradas">
-  </div>
-
-  <div class="pages" id="pages">
-    <div class="page p1"></div>
-    <div class="page p2"></div>
-    <div class="page p3"></div>
-    <div class="page p4"></div>
-    <div class="page p5"></div>
-    <div class="page p6"></div>
-  </div>
+  <div class="glow"></div>
 
   <div class="book" id="book">
-    <img src="libro-yina.png" alt="Yina XV Años">
+
+    <div class="openbook" id="openbook">
+      <div class="half left-static">
+        <span class="corner c1"></span><span class="corner c3"></span>
+      </div>
+      <div class="half right-static">
+        <span class="corner c2"></span><span class="corner c4"></span>
+      </div>
+
+      <div class="turn-page p1"></div>
+      <div class="turn-page p2"></div>
+      <div class="turn-page p3"></div>
+      <div class="turn-page p4"></div>
+      <div class="turn-page p5"></div>
+      <div class="turn-page p6"></div>
+      <div class="turn-page p7"></div>
+      <div class="turn-page p8"></div>
+
+      <div class="spine"></div>
+    </div>
+
+    <div class="cover" id="cover">
+      <img src="libro-yina.png" alt="Yina XV Años">
+    </div>
+
+    <button class="open-button" id="openButton">ABRIR AQUÍ</button>
   </div>
 
-  <button class="open-btn" id="openBtn">ABRIR AQUÍ</button>
+  <div class="final" id="final">
+    <img src="paginas-rojas-yina.png" alt="Interior rojo y dorado de la invitación">
+  </div>
 </div>
 
 <script>
-const book=document.getElementById('book');
-const pages=document.getElementById('pages');
+const cover=document.getElementById('cover');
+const openbook=document.getElementById('openbook');
 const finalPage=document.getElementById('final');
-const btn=document.getElementById('openBtn');
+const button=document.getElementById('openButton');
 let opened=false;
 
-function openBook(){
+function start(){
   if(opened)return;
   opened=true;
-  btn.classList.add('hide');
+  button.classList.add('hide');
 
-  // 1. La portada se abre de forma muy visible.
-  book.classList.add('open');
+  // 1) Portada abre desde el lomo.
+  cover.classList.add('open');
 
-  // 2. Varias hojas pasan rápidamente.
-  setTimeout(()=>pages.classList.add('show'),1100);
+  // 2) Aparece un libro abierto real y las hojas pasan del lado derecho al izquierdo.
+  setTimeout(()=>{
+    openbook.classList.add('show');
+    openbook.classList.add('turning');
+  },900);
 
-  // 3. Se muestra el interior rojo/dorado.
-  setTimeout(()=>finalPage.classList.add('show'),2800);
+  // 3) Mostramos la página interior roja/dorada antes de entrar a Canva.
+  setTimeout(()=>finalPage.classList.add('show'),3300);
 
-  // 4. Entrada a la invitación real.
+  // 4) Invitación real.
   setTimeout(()=>{
     window.location.href='https://xn--invitacin-isabel-y-david-nmc.my.canva.site/quince-a-os-yinna';
-  },3700);
+  },4400);
 }
-
-btn.addEventListener('click',openBook);
-btn.addEventListener('touchend',function(e){e.preventDefault();openBook()});
-book.addEventListener('click',openBook);
+button.addEventListener('click',start);
+button.addEventListener('touchend',e=>{e.preventDefault();start()});
 </script>
 </body>
 </html>
