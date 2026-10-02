@@ -8,130 +8,151 @@
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;height:100%;overflow:hidden}
 body{
-  background:radial-gradient(circle at 50% 45%,#7b0c1b 0%,#3a050d 48%,#120006 100%);
+  background:#190107;
   display:flex;align-items:center;justify-content:center;
   font-family:Georgia,"Times New Roman",serif;
   -webkit-tap-highlight-color:transparent;
 }
-.scene{width:100vw;height:100dvh;display:flex;align-items:center;justify-content:center;perspective:1800px;overflow:hidden}
+.scene{
+  position:relative;width:100vw;height:100dvh;
+  display:flex;align-items:center;justify-content:center;
+  perspective:1800px;overflow:hidden;
+}
+.bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(circle at 50% 45%,rgba(151,18,38,.95) 0%,rgba(67,5,16,.96) 48%,#160107 100%);
+}
+.glow{
+  position:absolute;width:90vmin;height:90vmin;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,195,90,.18),transparent 67%);
+  filter:blur(10px);pointer-events:none;
+}
 .book-wrap{
   position:relative;width:min(94vw,560px);height:min(92vh,840px);
+  display:flex;align-items:center;justify-content:center;
   perspective:1800px;
 }
 .book{
-  position:absolute;inset:0;transform-style:preserve-3d;
-  transform-origin:left center;
-  filter:drop-shadow(0 25px 35px rgba(0,0,0,.65));
-  transition:transform 1.35s cubic-bezier(.7,.03,.15,1);
-  z-index:10;
+  position:relative;width:100%;height:100%;max-width:560px;max-height:840px;
+  transform-style:preserve-3d;transform-origin:left center;
+  cursor:pointer;filter:drop-shadow(0 25px 35px rgba(0,0,0,.7));
+  transition:transform 1.55s cubic-bezier(.72,.02,.16,1);
+  will-change:transform;z-index:5;
 }
-.page{
-  position:absolute;inset:0;border-radius:3px 9px 9px 3px;
-  transform-origin:left center;transform-style:preserve-3d;
-  background:
-    linear-gradient(90deg,rgba(80,50,20,.22),transparent 8%,transparent 92%,rgba(90,50,10,.18)),
-    repeating-linear-gradient(0deg,#f8efd9 0 2px,#e7d7b6 2px 3px);
-  box-shadow:inset -8px 0 10px rgba(90,50,20,.16),0 8px 16px rgba(0,0,0,.25);
-  border:1px solid rgba(120,80,30,.45);
-  opacity:0;
-  z-index:var(--z);
-  transition:transform .9s cubic-bezier(.7,.02,.15,1),opacity .15s linear;
-}
-.page::after{
-  content:"";position:absolute;inset:5%;
-  border:1px solid rgba(150,105,45,.22);border-radius:2px;
-}
-.page.p1{--z:9}.page.p2{--z:8}.page.p3{--z:7}.page.p4{--z:6}.page.p5{--z:5}
 .cover{
   position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
-  object-position:center;backface-visibility:hidden;-webkit-backface-visibility:hidden;
-  user-select:none;-webkit-user-drag:none;z-index:20;
-  transform-origin:left center;
-  transition:transform 1.5s cubic-bezier(.7,.02,.15,1);
-}
-.spine{
-  position:absolute;left:-2px;top:1%;height:98%;width:8px;z-index:25;
-  background:linear-gradient(90deg,#5e0b12,#d69a36,#5e0b12);
-  opacity:.65;border-radius:4px;pointer-events:none;
+  object-position:center;backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;user-select:none;-webkit-user-drag:none;
 }
 .shine{
-  position:absolute;inset:0;z-index:30;pointer-events:none;opacity:0;
-  background:linear-gradient(105deg,transparent 32%,rgba(255,230,160,.38) 50%,transparent 68%);
+  position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(105deg,transparent 35%,rgba(255,230,160,0) 44%,rgba(255,230,160,.34) 50%,rgba(255,230,160,0) 56%,transparent 65%);
+  opacity:0;
 }
-.tap{
-  position:absolute;left:10%;right:10%;bottom:7%;height:15%;
-  z-index:40;border:0;background:transparent;border-radius:30px;cursor:pointer;
+.book.opening{transform:rotateY(-72deg) translateX(-3%)}
+.book.opening .shine{animation:shine 1.35s ease-in-out}
+@keyframes shine{
+  0%,100%{opacity:0;transform:translateX(-45%)}
+  35%{opacity:1}70%{opacity:.2}100%{transform:translateX(45%)}
+}
+.tap-area{
+  position:absolute;left:12%;right:12%;bottom:9%;height:14%;
+  z-index:6;border:0;background:transparent;cursor:pointer;border-radius:30px;
 }
 .hint{
-  position:absolute;bottom:2%;left:50%;transform:translateX(-50%);
+  position:absolute;bottom:2.2%;left:50%;transform:translateX(-50%);
   color:#ffe9ad;font:600 12px Arial,sans-serif;letter-spacing:.12em;
   text-transform:uppercase;text-shadow:0 2px 10px #000;white-space:nowrap;
-  z-index:50;pointer-events:none;
+  pointer-events:none;opacity:.9;z-index:7;
 }
-.opening .cover{transform:rotateY(-92deg);z-index:20}
-.opening .book{transform:translateX(-2%)}
-.opening .page{opacity:1}
-.opening .p1{transform:rotateY(-78deg);transition-delay:.18s}
-.opening .p2{transform:rotateY(-72deg);transition-delay:.38s}
-.opening .p3{transform:rotateY(-66deg);transition-delay:.58s}
-.opening .p4{transform:rotateY(-60deg);transition-delay:.78s}
-.opening .p5{transform:rotateY(-54deg);transition-delay:.98s}
-.opening .shine{animation:shine 1.55s ease-in-out .15s forwards}
-@keyframes shine{
-  0%{opacity:0;transform:translateX(-45%)}
-  35%{opacity:1}
-  70%{opacity:.25}
-  100%{opacity:0;transform:translateX(45%)}
+.interior{
+  position:fixed;inset:0;z-index:2;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transform:scale(1.05);
+  transition:opacity .8s ease,transform 1s ease;
+  pointer-events:none;
 }
-.fade{position:fixed;inset:0;background:#170006;opacity:0;pointer-events:none;z-index:100;transition:opacity .5s}
-body.leaving .fade{opacity:.95}
-@media(max-width:430px){.book-wrap{width:96vw;height:94dvh}}
-@media(max-height:650px){.book-wrap{width:86vw;height:92dvh}}
+.interior img{
+  width:100%;height:100%;object-fit:cover;
+  object-position:center;
+}
+.interior::after{
+  content:"";
+  position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(40,0,8,.12),rgba(0,0,0,0),rgba(40,0,8,.12));
+}
+body.reveal .interior{opacity:1;transform:scale(1)}
+body.reveal .book{opacity:0;pointer-events:none;transition:opacity .35s ease .35s}
+.fade{
+  position:fixed;inset:0;background:#170006;opacity:0;pointer-events:none;
+  z-index:20;transition:opacity .55s ease;
+}
+body.opening .fade{opacity:.18}
+@media (max-width:700px){
+  .interior img{object-fit:cover;object-position:center}
+}
+@media (max-width:430px){
+  .book-wrap{width:96vw;height:94dvh}
+}
+@media (max-height:650px){
+  .book-wrap{width:86vw;height:92dvh}
+}
 </style>
 </head>
 <body>
 <div class="scene">
-  <div class="book-wrap" id="bookWrap">
-    <div class="book" id="book">
-      <div class="page p1"></div>
-      <div class="page p2"></div>
-      <div class="page p3"></div>
-      <div class="page p4"></div>
-      <div class="page p5"></div>
+  <div class="bg"></div>
+  <div class="glow"></div>
+
+  <div class="interior" id="interior">
+    <img src="paginas-rojas-yina.png" alt="Páginas interiores rojas y doradas de la invitación de Yina">
+  </div>
+
+  <div class="book-wrap">
+    <div class="book" id="book" role="button" tabindex="0" aria-label="Abrir invitación">
       <img class="cover" src="libro-yina.png" alt="Yina — XV Años">
-      <div class="spine"></div>
       <div class="shine"></div>
-      <button class="tap" id="openBtn" aria-label="Abrir aquí"></button>
+      <button class="tap-area" id="openBtn" aria-label="Abrir aquí"></button>
     </div>
     <div class="hint">Toca “Abrir aquí”</div>
   </div>
 </div>
+
 <div class="fade"></div>
 
 <script>
-let opened=false;
-const btn=document.getElementById('openBtn');
-const wrap=document.getElementById('bookWrap');
+const book = document.getElementById('book');
+const btn = document.getElementById('openBtn');
+let opened = false;
 
-function openBook(e){
-  if(e)e.preventDefault();
-  if(opened)return;
-  opened=true;
+function openInvitation(e){
+  if(e) e.preventDefault();
+  if(opened) return;
+  opened = true;
+
   document.body.classList.add('opening');
+  book.classList.add('opening');
 
-  // La portada se abre y detrás se ven varias hojas pasando.
-  // Después entra al sitio web real de la invitación.
-  setTimeout(()=>{
-    document.body.classList.add('leaving');
-    setTimeout(()=>{
-      window.location.href='https://xn--invitacin-isabel-y-david-nmc.my.canva.site/quince-a-os-yinna';
-    },450);
-  },3300);
+  // Primero se ve claramente cómo se abre el libro.
+  setTimeout(() => {
+    document.body.classList.add('reveal');
+  }, 1250);
+
+  // Después de mostrar las páginas rojas, pasa a la invitación real de Canva.
+  setTimeout(() => {
+    window.location.assign('https://canva.link/v7riolfc923rb95');
+  }, 3800);
 }
-btn.addEventListener('click',openBook);
-wrap.addEventListener('click',e=>{if(e.target!==btn)openBook(e)});
-wrap.addEventListener('keydown',e=>{
-  if(e.key==='Enter'||e.key===' '){openBook(e)}
+
+btn.addEventListener('click', openInvitation);
+book.addEventListener('click', function(e){
+  if(e.target !== btn) openInvitation(e);
+});
+book.addEventListener('keydown', function(e){
+  if(e.key === 'Enter' || e.key === ' '){
+    openInvitation(e);
+  }
 });
 </script>
 </body>
