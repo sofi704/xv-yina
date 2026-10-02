@@ -2,116 +2,143 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <title>Yina — XV Años</title>
 <style>
-  * { box-sizing: border-box; }
-  html, body { margin:0; width:100%; height:100%; overflow:hidden; }
-  body {
-    background:
-      radial-gradient(circle at 50% 45%, #6e0a16 0%, #30030a 55%, #100006 100%);
-    display:flex; align-items:center; justify-content:center;
-    font-family: Georgia, "Times New Roman", serif;
-  }
-  .scene {
-    position:relative;
-    width:min(100vw, 520px);
-    height:100vh;
-    max-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    perspective:1800px;
-  }
-  .book {
-    position:relative;
-    width:min(92vw, 460px);
-    aspect-ratio:2/3;
-    transform-style:preserve-3d;
-    transform-origin:left center;
-    transition:transform 1.15s cubic-bezier(.65,.02,.2,1);
-    filter:drop-shadow(0 24px 28px rgba(0,0,0,.55));
-    will-change:transform;
-  }
-  .book img {
-    width:100%; height:100%; display:block;
-    object-fit:cover;
-    border-radius:2px 10px 10px 2px;
-    backface-visibility:hidden;
-    -webkit-backface-visibility:hidden;
-    user-select:none;
-    -webkit-user-drag:none;
-  }
-  .book::after {
-    content:"";
-    position:absolute; inset:0;
-    background:linear-gradient(90deg, rgba(0,0,0,.30), transparent 18%, transparent 78%, rgba(255,255,255,.10));
-    pointer-events:none;
-    border-radius:2px 10px 10px 2px;
-  }
-  .page-edge {
-    position:absolute; top:1%; right:-7px; width:10px; height:98%;
-    border-radius:0 6px 6px 0;
-    background:repeating-linear-gradient(to bottom,#e8d5aa 0 3px,#b99b67 3px 5px);
-    opacity:.8;
-    transform:translateZ(-2px);
-  }
-  .tap {
-    position:absolute;
-    left:50%; bottom:8%;
-    transform:translateX(-50%);
-    width:56%; height:10%;
-    background:transparent;
-    border:0;
-    cursor:pointer;
-    z-index:5;
-    border-radius:30px;
-  }
-  .tap:focus-visible { outline:3px solid #fff; outline-offset:5px; }
-  .hint {
-    position:absolute; bottom:2.5%;
-    color:#f9e4a9; font:600 13px/1.2 Arial,sans-serif;
-    letter-spacing:.12em; text-transform:uppercase;
-    text-shadow:0 2px 8px #000;
-    opacity:.85;
-    pointer-events:none;
-  }
-  .veil {
-    position:fixed; inset:0; background:#210006;
-    opacity:0; pointer-events:none; transition:opacity .35s ease;
-    z-index:10;
-  }
-  .opening .book { transform:rotateY(-78deg); }
-  .opening .veil { opacity:.18; }
-  @media (max-height:700px) {
-    .book { width:min(82vw, 390px); }
-  }
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{
+  background:
+    radial-gradient(circle at 50% 42%,#8d1020 0%,#430610 42%,#160107 100%);
+  display:flex;align-items:center;justify-content:center;
+  font-family:Georgia,"Times New Roman",serif;
+  -webkit-tap-highlight-color:transparent;
+}
+.scene{
+  position:relative;width:100vw;height:100dvh;
+  display:flex;align-items:center;justify-content:center;
+  perspective:1800px;
+  overflow:hidden;
+}
+.glow{
+  position:absolute;width:85vmin;height:85vmin;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,195,90,.16),transparent 65%);
+  filter:blur(8px);pointer-events:none;
+}
+.book-wrap{
+  position:relative;
+  width:min(94vw,560px);
+  height:min(92vh,840px);
+  display:flex;align-items:center;justify-content:center;
+  perspective:1800px;
+}
+.book{
+  position:relative;
+  width:100%;height:100%;
+  max-width:560px;max-height:840px;
+  transform-style:preserve-3d;
+  transform-origin:left center;
+  cursor:pointer;
+  filter:drop-shadow(0 25px 35px rgba(0,0,0,.65));
+  transition:transform 1.55s cubic-bezier(.72,.02,.16,1);
+  will-change:transform;
+}
+.cover{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  object-fit:contain;
+  object-position:center;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+.shine{
+  position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(105deg,transparent 35%,rgba(255,230,160,.0) 44%,rgba(255,230,160,.30) 50%,rgba(255,230,160,.0) 56%,transparent 65%);
+  opacity:0;
+}
+.book.opening{
+  transform:rotateY(-72deg) translateX(-3%);
+}
+.book.opening .shine{
+  animation:shine 1.35s ease-in-out;
+}
+@keyframes shine{
+  0%,100%{opacity:0;transform:translateX(-45%)}
+  35%{opacity:1}
+  70%{opacity:.2}
+  100%{transform:translateX(45%)}
+}
+.tap-area{
+  position:absolute;left:12%;right:12%;bottom:9%;height:14%;
+  z-index:5;border:0;background:transparent;
+  cursor:pointer;border-radius:30px;
+}
+.tap-area:focus-visible{outline:3px solid #fff;outline-offset:5px}
+.hint{
+  position:absolute;bottom:2.2%;left:50%;transform:translateX(-50%);
+  color:#ffe9ad;font:600 12px Arial,sans-serif;
+  letter-spacing:.12em;text-transform:uppercase;
+  text-shadow:0 2px 10px #000;white-space:nowrap;
+  pointer-events:none;opacity:.9;
+}
+.fade{
+  position:fixed;inset:0;background:#170006;
+  opacity:0;pointer-events:none;z-index:20;
+  transition:opacity .45s ease;
+}
+body.opening .fade{opacity:.22}
+@media (max-width:430px){
+  .book-wrap{width:96vw;height:94dvh}
+  .book{width:100%;height:100%}
+}
+@media (max-height:650px){
+  .book-wrap{width:86vw;height:92dvh}
+}
 </style>
 </head>
 <body>
-  <main class="scene" id="scene" aria-label="Invitación de XV años">
-    <div class="book" id="book">
-      <img src="libro-yina.png" alt="Libro de invitación de Yina, XV Años">
-      <div class="page-edge"></div>
-      <button class="tap" id="openBtn" aria-label="Abrir aquí"></button>
+<div class="scene" id="scene">
+  <div class="glow"></div>
+  <div class="book-wrap">
+    <div class="book" id="book" role="button" tabindex="0" aria-label="Abrir invitación">
+      <img class="cover" src="libro-yina.png" alt="Yina — XV Años">
+      <div class="shine"></div>
+      <button class="tap-area" id="openBtn" aria-label="Abrir aquí"></button>
     </div>
     <div class="hint">Toca “Abrir aquí”</div>
-  </main>
-  <div class="veil"></div>
+  </div>
+</div>
+<div class="fade"></div>
 
 <script>
-  const scene = document.getElementById('scene');
-  const btn = document.getElementById('openBtn');
+const book = document.getElementById('book');
+const btn = document.getElementById('openBtn');
+let opened = false;
 
-  btn.addEventListener('click', () => {
-    scene.classList.add('opening');
-    btn.disabled = true;
+function openInvitation(e){
+  if(e) e.preventDefault();
+  if(opened) return;
+  opened = true;
+  document.body.classList.add('opening');
+  book.classList.add('opening');
 
-    // Cuando termina la apertura, entra al sitio web real de la invitación.
-    setTimeout(() => {
-      window.location.href = 'https://canva.link/v7riolfc923rb95';
-    }, 1150);
-  });
+  // Espera a que se vea claramente la apertura antes de entrar a Canva.
+  setTimeout(() => {
+    window.location.assign('https://canva.link/v7riolfc923rb95');
+  }, 1650);
+}
+
+btn.addEventListener('click', openInvitation);
+book.addEventListener('click', function(e){
+  if(e.target !== btn) openInvitation(e);
+});
+book.addEventListener('keydown', function(e){
+  if(e.key === 'Enter' || e.key === ' '){
+    openInvitation(e);
+  }
+});
 </script>
 </body>
 </html>
