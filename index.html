@@ -8,125 +8,136 @@
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;height:100%;overflow:hidden}
 body{
-  background:#170106;
-  display:flex;align-items:center;justify-content:center;
+  background:
+    radial-gradient(circle at 50% 45%,#8d1326 0%,#450711 48%,#160106 100%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
   font-family:Georgia,"Times New Roman",serif;
 }
 .scene{
-  position:relative;width:100vw;height:100dvh;
-  display:flex;align-items:center;justify-content:center;
-  perspective:1800px;overflow:hidden;
-  background:radial-gradient(circle at 50% 45%,#8f1427 0%,#460712 47%,#160106 100%);
+  position:relative;
+  width:100vw;
+  height:100dvh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  perspective:2200px;
+  overflow:hidden;
 }
 .glow{
-  position:absolute;width:90vmin;height:90vmin;border-radius:50%;
-  background:radial-gradient(circle,rgba(255,198,100,.18),transparent 68%);
+  position:absolute;
+  width:90vmin;
+  height:90vmin;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(255,200,105,.18),transparent 68%);
   filter:blur(12px);
+  pointer-events:none;
 }
+
+/* This is the ORIGINAL cover. It is not recreated or redesigned. */
 .book{
-  position:relative;width:min(94vw,560px);height:min(92vh,840px);
+  position:relative;
+  width:min(94vw,560px);
+  height:min(92vh,840px);
   transform-style:preserve-3d;
-  filter:drop-shadow(0 25px 38px rgba(0,0,0,.72));
+  transform-origin:left center;
+  filter:drop-shadow(0 28px 40px rgba(0,0,0,.75));
+  transition:transform 1.55s cubic-bezier(.72,.02,.16,1);
+  z-index:5;
 }
-.inside{
-  position:absolute;inset:0;z-index:1;
-  border-radius:5px;
-  overflow:hidden;
-  background:
-    radial-gradient(circle at 50% 45%,rgba(180,25,50,.95),rgba(104,8,25,.98) 68%),
-    #710a20;
-  box-shadow:inset 0 0 45px rgba(255,205,115,.2);
-}
-.inside img{
-  width:100%;height:100%;object-fit:cover;object-position:center;
+.book img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
   display:block;
-}
-.inside:after{
-  content:"";
-  position:absolute;left:50%;top:0;bottom:0;width:3px;
-  transform:translateX(-50%);
-  background:linear-gradient(90deg,#36030c,#e0b35b 45%,#5a0717 65%,#28020a);
-  box-shadow:0 0 18px rgba(0,0,0,.55);
-  opacity:.9;
-}
-
-/* One real-looking page: it pivots from the spine. */
-.page{
-  position:absolute;inset:0;z-index:10;
-  transform-origin:left center;
-  transform-style:preserve-3d;
-  transition:transform 1.45s cubic-bezier(.72,.03,.17,1);
-  will-change:transform;
-}
-.page-front,.page-back{
-  position:absolute;inset:0;
+  user-select:none;
+  -webkit-user-drag:none;
   backface-visibility:hidden;
-  -webkit-backface-visibility:hidden;
-  border-radius:5px;
-  overflow:hidden;
 }
-.page-front{
-  background:#250208;
-}
-.page-front img{
-  width:100%;height:100%;object-fit:contain;display:block;
-}
-.page-back{
-  transform:rotateY(180deg);
-  background:
-    radial-gradient(circle at 50% 45%,#a81732 0%,#710a20 66%,#4b0615 100%);
-  border:2px solid #d8ae5b;
-}
-.page-back:before{
-  content:"";
-  position:absolute;inset:3%;
-  border:2px solid rgba(255,219,137,.82);
-}
-.page-back:after{
-  content:"✦   ❦   ✦";
-  position:absolute;left:0;right:0;top:50%;
-  transform:translateY(-50%);
-  text-align:center;color:#f3cf7a;font-size:32px;
-  text-shadow:0 0 15px rgba(255,190,70,.65);
-}
-.page.open{
-  transform:rotateY(-125deg);
+.book.open{
+  transform:rotateY(-105deg) translateX(-7%);
 }
 
-/* Soft shadow follows the turning page. */
-.page-shadow{
-  position:absolute;inset:0;z-index:9;
-  pointer-events:none;opacity:0;
-  background:linear-gradient(90deg,rgba(0,0,0,.58),transparent 42%);
+/* Subtle page-edge impression behind the original cover.
+   It contains NO text and NO extra Yinna page. */
+.book::before{
+  content:"";
+  position:absolute;
+  left:49.5%;
+  top:1%;
+  width:49%;
+  height:98%;
+  z-index:-1;
+  border-radius:2px 5px 5px 2px;
+  background:
+    linear-gradient(90deg,#f0dfb9,#fff6e1 48%,#d7c29c);
+  box-shadow:8px 0 18px rgba(0,0,0,.28);
   transform-origin:left center;
-  transition:opacity .25s,transform 1.45s cubic-bezier(.72,.03,.17,1);
+  opacity:0;
+  transition:opacity .15s ease;
 }
-.page.open + .page-shadow{
-  opacity:.75;
-  transform:rotateY(-105deg);
+.book.open::before{
+  opacity:1;
+}
+
+/* Soft shine during the opening */
+.shine{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(
+    105deg,
+    transparent 35%,
+    rgba(255,225,150,0) 44%,
+    rgba(255,225,150,.38) 50%,
+    rgba(255,225,150,0) 56%,
+    transparent 65%
+  );
+  opacity:0;
+}
+.book.open .shine{
+  animation:shine 1.15s ease-in-out;
+}
+@keyframes shine{
+  0%{opacity:0;transform:translateX(-45%)}
+  35%{opacity:1}
+  100%{opacity:0;transform:translateX(45%)}
 }
 
 .open-button{
-  position:absolute;left:50%;bottom:9%;z-index:30;
+  position:absolute;
+  left:50%;
+  bottom:9%;
   transform:translateX(-50%);
-  border:1px solid #efcb75;border-radius:999px;
+  z-index:20;
   padding:13px 28px;
+  border:1px solid #f0cc77;
+  border-radius:999px;
   background:linear-gradient(180deg,#a71932,#620716);
   color:#ffe9ad;
   font:700 14px Arial,sans-serif;
   letter-spacing:.15em;
-  box-shadow:0 8px 25px rgba(0,0,0,.55),inset 0 0 12px rgba(255,220,130,.16);
-  cursor:pointer;touch-action:manipulation;
+  box-shadow:0 8px 25px rgba(0,0,0,.55);
+  cursor:pointer;
+  touch-action:manipulation;
 }
-.open-button.hide{opacity:0;pointer-events:none;transition:.2s}
-
-.final{
-  position:fixed;inset:0;z-index:0;
-  opacity:0;transition:opacity .45s ease;
+.open-button.hide{
+  opacity:0;
   pointer-events:none;
+  transition:opacity .2s ease;
 }
-.final img{width:100%;height:100%;object-fit:cover}
-.final.show{opacity:1}
+
+.fade{
+  position:fixed;
+  inset:0;
+  z-index:30;
+  background:#170006;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .45s ease;
+}
+body.go .fade{opacity:.25}
 
 @media(max-width:430px){
   .book{width:96vw;height:94dvh}
@@ -141,50 +152,40 @@ body{
   <div class="glow"></div>
 
   <div class="book" id="book">
-    <div class="inside">
-      <img src="paginas-rojas-yina.png" alt="Interior rojo y dorado">
-    </div>
-
-    <div class="page" id="page">
-      <div class="page-front">
-        <img src="libro-yina.png" alt="Yina — XV Años">
-      </div>
-      <div class="page-back"></div>
-    </div>
-    <div class="page-shadow"></div>
-
+    <img src="libro-yina.png" alt="Yina — XV Años">
+    <div class="shine"></div>
     <button class="open-button" id="openButton">ABRIR AQUÍ</button>
-  </div>
-
-  <div class="final" id="final">
-    <img src="paginas-rojas-yina.png" alt="Páginas rojas y doradas">
   </div>
 </div>
 
+<div class="fade"></div>
+
 <script>
-const page=document.getElementById('page');
-const button=document.getElementById('openButton');
-const finalPage=document.getElementById('final');
-let opened=false;
+const book = document.getElementById('book');
+const button = document.getElementById('openButton');
+let opened = false;
 
-function openBook(e){
-  if(e)e.preventDefault();
-  if(opened)return;
-  opened=true;
+function openInvitation(e){
+  if(e) e.preventDefault();
+  if(opened) return;
+  opened = true;
+
   button.classList.add('hide');
+  document.body.classList.add('go');
 
-  // Una sola página/portada gira desde el lomo, como en el efecto de referencia.
-  requestAnimationFrame(()=>page.classList.add('open'));
+  // La portada original se abre hacia la izquierda.
+  book.classList.add('open');
 
-  // Dejamos ver el interior rojo antes de pasar a Canva.
-  setTimeout(()=>finalPage.classList.add('show'),1350);
-
-  setTimeout(()=>{
-    window.location.href='https://xn--invitacin-isabel-y-david-nmc.my.canva.site/quince-a-os-yinna';
-  },2700);
+  // No hay página intermedia: al terminar la animación,
+  // entra directamente a la página web real de Canva.
+  setTimeout(() => {
+    window.location.href =
+      'https://xn--invitacin-isabel-y-david-nmc.my.canva.site/quince-a-os-yinna';
+  }, 1550);
 }
-button.addEventListener('click',openBook);
-button.addEventListener('touchend',openBook);
+
+button.addEventListener('click', openInvitation);
+button.addEventListener('touchend', openInvitation);
 </script>
 </body>
 </html>
