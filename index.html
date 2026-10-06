@@ -1,197 +1,144 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <title>Yina — XV Años</title>
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;height:100%;overflow:hidden}
 body{
-  background:radial-gradient(circle at center,#8e1428 0%,#470711 52%,#160106 100%);
-  font-family:Georgia,"Times New Roman",serif;
+  background:radial-gradient(circle at 50% 45%,#8d1428 0%,#470711 48%,#160106 100%);
+  display:flex;align-items:center;justify-content:center;
 }
 .scene{
-  width:100vw;height:100vh;height:100dvh;
-  position:relative;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  perspective:1800px;
-  overflow:hidden;
+  position:relative;width:100vw;height:100dvh;
+  display:flex;align-items:center;justify-content:center;
+  perspective:2200px;overflow:hidden;
 }
 .glow{
-  position:absolute;
-  width:90vmin;height:90vmin;
-  border-radius:50%;
-  background:radial-gradient(circle,rgba(255,200,100,.20),transparent 68%);
-  filter:blur(10px);
-  pointer-events:none;
+  position:absolute;width:90vmin;height:90vmin;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,205,115,.18),transparent 68%);
+  filter:blur(12px);pointer-events:none;
 }
-.book-area{
+.book-wrap{
   position:relative;
-  width:min(92vw,560px);
-  height:min(88vh,820px);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:2;
+  width:min(94vw,560px);
+  height:min(92vh,840px);
+  display:flex;align-items:center;justify-content:center;
 }
 .book{
-  width:100%;
-  height:100%;
-  position:relative;
+  position:relative;width:100%;height:100%;
   transform-style:preserve-3d;
   transform-origin:left center;
-  transition:transform 1.65s cubic-bezier(.72,.02,.16,1);
-  filter:drop-shadow(0 28px 38px rgba(0,0,0,.75));
+  transition:transform 1.6s cubic-bezier(.72,.02,.16,1);
+  filter:drop-shadow(0 28px 40px rgba(0,0,0,.75));
+  z-index:5;
 }
-.book-cover{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:contain;
-  display:block;
-  user-select:none;
-  -webkit-user-drag:none;
-  pointer-events:none;
+.book.open{transform:rotateY(-108deg) translateX(-5%)}
+.cover{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:contain;display:block;
+  user-select:none;-webkit-user-drag:none;
   backface-visibility:hidden;
 }
-.book.open{
-  transform:rotateY(-115deg) translateX(-5%);
-}
-
-/* A subtle inner page edge appears behind the cover only during the turn. */
-.book::after{
-  content:"";
-  position:absolute;
-  z-index:-1;
-  left:49.5%;
-  top:2%;
-  width:49%;
-  height:96%;
-  border-radius:0 5px 5px 0;
-  background:linear-gradient(90deg,#ead9b4,#fff6df 45%,#d2bd94);
-  box-shadow:7px 0 18px rgba(0,0,0,.35);
-  opacity:0;
-  transition:opacity .15s;
-}
-.book.open::after{opacity:1}
-
-/* shine */
 .shine{
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  background:linear-gradient(105deg,transparent 34%,rgba(255,225,150,.42) 50%,transparent 66%);
+  position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(105deg,transparent 35%,rgba(255,225,150,.38) 50%,transparent 65%);
   opacity:0;
 }
-.book.open .shine{animation:shine 1.2s ease}
+.book.open .shine{animation:shine 1.15s ease}
 @keyframes shine{
-  0%{opacity:0;transform:translateX(-40%)}
-  30%{opacity:1}
-  100%{opacity:0;transform:translateX(40%)}
+  0%{opacity:0;transform:translateX(-45%)}
+  35%{opacity:1}
+  100%{opacity:0;transform:translateX(45%)}
 }
 
-/* Button is OUTSIDE the transformed book so it always receives the tap. */
-.open-button{
-  position:fixed;
-  left:50%;
-  bottom:6vh;
-  transform:translateX(-50%);
-  z-index:100;
-  border:1px solid #f2ce79;
-  border-radius:999px;
-  padding:14px 30px;
-  background:linear-gradient(180deg,#aa1933,#600716);
-  color:#ffe9ad;
-  font-family:Arial,sans-serif;
-  font-size:14px;
-  font-weight:700;
-  letter-spacing:.16em;
-  box-shadow:0 8px 28px rgba(0,0,0,.60);
+/* Invisible hotspot placed EXACTLY over the "ABRIR AQUÍ"
+   printed on the original cover. */
+.cover-hotspot{
+  position:absolute;
+  left:29%;
+  top:70.5%;
+  width:43%;
+  height:10.5%;
+  z-index:20;
+  border:0;
+  padding:0;
+  margin:0;
+  background:transparent;
   cursor:pointer;
-  pointer-events:auto;
+  border-radius:50px;
   touch-action:manipulation;
 }
-.open-button:active{
-  transform:translateX(-50%) scale(.96);
-}
-.open-button.hide{
-  opacity:0;
+
+/* During the opening the hotspot must not block the animation. */
+.cover-hotspot.hidden{pointer-events:none}
+
+.hint{
+  position:absolute;
+  left:50%;bottom:1.5%;
+  transform:translateX(-50%);
+  color:#ffe9ad;
+  font:600 11px Arial,sans-serif;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  text-shadow:0 2px 10px #000;
+  opacity:.8;
   pointer-events:none;
-  transition:opacity .2s;
+  z-index:30;
 }
 
-/* Prevents any old/intermediate page from being shown. */
-.cover-screen{
-  position:fixed;
-  inset:0;
-  z-index:1;
-  pointer-events:none;
-}
 .fade{
-  position:fixed;
-  inset:0;
-  background:#170006;
-  opacity:0;
-  z-index:50;
-  pointer-events:none;
+  position:fixed;inset:0;z-index:50;
+  background:#170006;opacity:0;pointer-events:none;
   transition:opacity .35s;
 }
-body.opening .fade{opacity:.35}
+body.opening .fade{opacity:.25}
 
 @media(max-width:430px){
-  .book-area{width:96vw;height:90dvh}
-  .open-button{bottom:4vh}
+  .book-wrap{width:96vw;height:94dvh}
+}
+@media(max-height:650px){
+  .book-wrap{width:86vw;height:92dvh}
 }
 </style>
 </head>
 <body>
 <div class="scene">
   <div class="glow"></div>
-
-  <div class="book-area">
+  <div class="book-wrap">
     <div class="book" id="book">
-      <img class="book-cover" src="libro-yina.png" alt="Yina XV Años">
+      <img class="cover" src="libro-yina.png" alt="Yina XV Años">
       <div class="shine"></div>
+      <button class="cover-hotspot" id="openButton" aria-label="Abrir aquí"></button>
+      <div class="hint">Toca “ABRIR AQUÍ”</div>
     </div>
   </div>
 </div>
-
-<button class="open-button" id="openButton" type="button">ABRIR AQUÍ</button>
 <div class="fade"></div>
 
 <script>
-(function(){
-  const book = document.getElementById("book");
-  const button = document.getElementById("openButton");
-  let opened = false;
+const book=document.getElementById('book');
+const button=document.getElementById('openButton');
+let opened=false;
 
-  function openBook(event){
-    if(event) event.preventDefault();
-    if(opened) return;
-    opened = true;
+function openBook(e){
+  if(e)e.preventDefault();
+  if(opened)return;
+  opened=true;
+  button.classList.add('hidden');
+  document.body.classList.add('opening');
+  book.classList.add('open');
 
-    button.classList.add("hide");
-    document.body.classList.add("opening");
+  // Directamente a TU página web de Canva, sin páginas intermedias.
+  setTimeout(function(){
+    window.location.href='https://xn--invitacin-isabel-y-david-nmc.my.canva.site/quince-a-os-yinna';
+  },1700);
+}
 
-    // The cover visibly rotates from the spine.
-    book.classList.add("open");
-
-    // Go DIRECTLY to the real Canva website. No intermediate image/page.
-    setTimeout(function(){
-      window.location.href = "https://xn--invitacin-isabel-y-david-nmc.my.canva.site/quince-a-os-yinna";
-    }, 1750);
-  }
-
-  button.addEventListener("click", openBook);
-  button.addEventListener("touchend", openBook, {passive:false});
-
-  // Also allow tapping the cover itself.
-  book.addEventListener("click", openBook);
-})();
+button.addEventListener('click',openBook);
+button.addEventListener('touchend',openBook,{passive:false});
 </script>
 </body>
 </html>
