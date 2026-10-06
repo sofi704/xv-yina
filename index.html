@@ -2,208 +2,226 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <title>Yina — XV Años</title>
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;height:100%;overflow:hidden}
 body{
-  background:
-    radial-gradient(circle at 50% 43%,#8f1428 0%,#480711 48%,#160106 100%);
+  background:radial-gradient(circle at 50% 44%,#8d1428 0%,#470711 48%,#160106 100%);
 }
 .scene{
-  position:relative;
-  width:100vw;
-  height:100dvh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  perspective:2200px;
-  overflow:hidden;
+  position:relative;width:100vw;height:100dvh;
+  display:flex;align-items:center;justify-content:center;
+  perspective:2400px;overflow:hidden;
 }
-
-/* Interior behind the cover: only a subtle red book/page surface.
-   It is NOT an extra image and contains no "Yinna" text. */
-.inside{
-  position:absolute;
-  width:min(94vw,560px);
-  height:min(92vh,840px);
-  border-radius:5px;
-  background:
-    radial-gradient(circle at 50% 45%,#94142b 0%,#69091e 65%,#450512 100%);
-  box-shadow:
-    inset 0 0 45px rgba(255,210,120,.18),
-    0 25px 45px rgba(0,0,0,.55);
-  overflow:hidden;
-}
-.inside:before{
-  content:"";
-  position:absolute;
-  left:3%;right:3%;top:3%;bottom:3%;
-  border:2px solid rgba(235,194,105,.55);
-}
-.inside:after{
-  content:"";
-  position:absolute;
-  left:50%;top:2%;bottom:2%;width:4px;
-  transform:translateX(-50%);
-  background:linear-gradient(90deg,#3a030d,#d2a34e,#500615);
-  box-shadow:0 0 14px rgba(0,0,0,.45);
-}
-
-.book-wrap{
+.book{
   position:relative;
   width:min(94vw,560px);
   height:min(92vh,840px);
   transform-style:preserve-3d;
-  z-index:5;
+  filter:drop-shadow(0 28px 40px rgba(0,0,0,.75));
+}
+.book-surface{
+  position:absolute;inset:0;
+  transform-style:preserve-3d;
 }
 
-.cover{
+/* Fixed spine: it never rotates. */
+.spine{
   position:absolute;
-  inset:0;
+  left:0;top:0;
+  width:12%;
+  height:100%;
+  z-index:5;
+  overflow:hidden;
+  background:#7e0b20;
+}
+.spine img{
   width:100%;
   height:100%;
-  object-fit:contain;
+  object-fit:fill;
   display:block;
+}
+
+/* The front cover is a real hinged panel.
+   Its left edge is exactly at the spine. */
+.front{
+  position:absolute;
+  left:12%;
+  top:0;
+  width:88%;
+  height:100%;
   transform-origin:left center;
   transform-style:preserve-3d;
+  transition:transform 1.9s cubic-bezier(.72,.02,.15,1);
+  z-index:10;
+}
+.front.open{
+  transform:rotateY(-168deg);
+}
+.front img{
+  width:100%;
+  height:100%;
+  object-fit:fill;
+  display:block;
   backface-visibility:hidden;
   -webkit-backface-visibility:hidden;
   user-select:none;
   -webkit-user-drag:none;
-  cursor:pointer;
-  transition:transform 2.1s cubic-bezier(.72,.01,.15,1);
-  filter:drop-shadow(0 25px 34px rgba(0,0,0,.72));
 }
 
-/* This is the actual book-opening movement. */
-.cover.open{
-  transform:rotateY(-165deg);
+/* Inside/back of the hinged cover */
+.front-back{
+  position:absolute;inset:0;
+  transform:rotateY(180deg);
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  background:
+    radial-gradient(circle at 50% 45%,#9b1730 0%,#710a20 64%,#4a0614 100%);
+  border:2px solid #d7aa55;
+}
+.front-back:before{
+  content:"";
+  position:absolute;inset:3%;
+  border:2px solid rgba(255,220,140,.75);
+}
+.front-back:after{
+  content:"❦";
+  position:absolute;left:0;right:0;top:50%;
+  transform:translateY(-50%);
+  text-align:center;color:#efc970;font-size:36px;
 }
 
-/* Moving shadow makes the hinge/page-turn easier to see. */
-.turn-shadow{
+/* Subtle white/red page edges behind the opening cover */
+.pages{
   position:absolute;
-  inset:0;
+  left:12%;top:1%;
+  width:88%;height:98%;
+  border-radius:0 5px 5px 0;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      #e7d7b4 0px,#fff5dc 2px,#d1bd94 4px
+    );
+  box-shadow:inset 0 0 30px rgba(0,0,0,.25);
+  z-index:2;
+}
+
+/* Hinge shadow */
+.hinge-shadow{
+  position:absolute;
+  left:12%;top:0;width:88%;height:100%;
+  z-index:11;
   pointer-events:none;
-  z-index:8;
   transform-origin:left center;
   opacity:0;
-  background:linear-gradient(90deg,rgba(0,0,0,.58),transparent 55%);
+  background:linear-gradient(90deg,rgba(0,0,0,.60),transparent 48%);
 }
-.cover.open + .turn-shadow{
-  animation:turnShadow 2.1s cubic-bezier(.72,.01,.15,1) forwards;
+.front.open ~ .hinge-shadow{
+  animation:hingeShadow 1.9s cubic-bezier(.72,.02,.15,1) forwards;
 }
-@keyframes turnShadow{
-  0%{opacity:0;transform:rotateY(0deg)}
-  18%{opacity:.55}
-  55%{opacity:.28}
-  100%{opacity:0;transform:rotateY(-165deg)}
-}
-
-/* Shine only during the turn */
-.shine{
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  z-index:9;
-  opacity:0;
-  background:linear-gradient(105deg,transparent 35%,rgba(255,225,150,.42) 50%,transparent 65%);
-}
-.cover.open ~ .shine{
-  animation:shine 1.45s ease-in-out;
-}
-@keyframes shine{
-  0%{opacity:0;transform:translateX(-45%)}
-  30%{opacity:1}
-  100%{opacity:0;transform:translateX(45%)}
+@keyframes hingeShadow{
+  0%{opacity:0;transform:rotateY(0)}
+  18%{opacity:.7}
+  55%{opacity:.35}
+  100%{opacity:0;transform:rotateY(-168deg)}
 }
 
-/*
-  IMPORTANT:
-  There is NO visible HTML button.
-  The "ABRIR AQUÍ" button printed inside the original cover is the button.
-  The whole cover is clickable so the printed button always works on phones.
-*/
-.tap-area{
+/* The clickable area is exactly the printed ABRIR AQUÍ region,
+   but invisible. No extra visible button is created. */
+.tap{
   position:absolute;
-  inset:0;
-  z-index:20;
-  border:0;
-  padding:0;
-  margin:0;
-  background:transparent;
+  left:34%;
+  top:70%;
+  width:45%;
+  height:11%;
+  z-index:30;
+  border:0;background:transparent;
   cursor:pointer;
+  border-radius:50px;
+  padding:0;margin:0;
   touch-action:manipulation;
 }
 
-/* A short fade at the end before opening Canva. */
-.fade{
+.hint{
   position:fixed;
-  inset:0;
-  z-index:50;
-  background:#170006;
-  opacity:0;
+  left:50%;bottom:1.5%;
+  transform:translateX(-50%);
+  color:#ffe9ad;
+  font:600 11px Arial,sans-serif;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  text-shadow:0 2px 10px #000;
   pointer-events:none;
-  transition:opacity .45s ease;
+  z-index:40;
+  opacity:.85;
 }
-body.opening .fade{opacity:.32}
+body.opened .hint{display:none}
+
+.fade{
+  position:fixed;inset:0;z-index:50;
+  background:#170006;opacity:0;
+  pointer-events:none;transition:opacity .4s;
+}
+body.opening .fade{opacity:.2}
 
 @media(max-width:430px){
-  .inside,.book-wrap{width:96vw;height:94dvh}
+  .book{width:96vw;height:94dvh}
 }
 @media(max-height:650px){
-  .inside,.book-wrap{width:86vw;height:92dvh}
+  .book{width:86vw;height:92dvh}
 }
 </style>
 </head>
 <body>
 <div class="scene">
+  <div class="book" id="book">
+    <div class="book-surface">
+      <div class="pages"></div>
 
-  <div class="inside"></div>
+      <div class="spine">
+        <img src="lomo-yina.png" alt="">
+      </div>
 
-  <div class="book-wrap">
-    <!-- EXACT original cover: no redesign and no added visible button -->
-    <img class="cover" id="cover" src="libro-yina.png" alt="Yina — XV Años">
-    <div class="turn-shadow"></div>
-    <div class="shine"></div>
+      <div class="front" id="front">
+        <img src="portada-yina.png" alt="Yina XV Años">
+        <div class="front-back"></div>
+      </div>
 
-    <!-- Invisible clickable layer over the original printed ABRIR AQUÍ.
-         It covers the whole cover intentionally so it cannot miss on mobile. -->
-    <button class="tap-area" id="tapArea" aria-label="Abrir aquí"></button>
+      <div class="hinge-shadow"></div>
+
+      <button class="tap" id="tap" aria-label="Abrir aquí"></button>
+    </div>
   </div>
-
 </div>
 
 <div class="fade"></div>
+<div class="hint">Toca “ABRIR AQUÍ”</div>
 
 <script>
-const cover = document.getElementById("cover");
-const tap = document.getElementById("tapArea");
-let opened = false;
+const front=document.getElementById("front");
+const tap=document.getElementById("tap");
+let opened=false;
 
 function openBook(e){
-  if(e) e.preventDefault();
-  if(opened) return;
-  opened = true;
+  if(e)e.preventDefault();
+  if(opened)return;
+  opened=true;
 
-  tap.disabled = true;
-  tap.style.pointerEvents = "none";
-  document.body.classList.add("opening");
+  tap.style.pointerEvents="none";
+  document.body.classList.add("opened","opening");
 
-  // Real, visible hinge/page-opening animation.
-  cover.classList.add("open");
+  // REAL hinge: the spine stays fixed and only the cover panel turns.
+  front.classList.add("open");
 
-  // After the animation, go directly to the user's Canva website.
   setTimeout(function(){
-    window.location.href =
-      "https://xn--invitacin-isabel-y-david-nmc.my.canva.site/quince-a-os-yinna";
-  }, 2350);
+    window.location.href="https://xn--invitacin-isabel-y-david-nmc.my.canva.site/quince-a-os-yinna";
+  },2100);
 }
 
-tap.addEventListener("click", openBook);
-tap.addEventListener("touchend", openBook, {passive:false});
+tap.addEventListener("click",openBook);
+tap.addEventListener("touchend",openBook,{passive:false});
 </script>
 </body>
 </html>
