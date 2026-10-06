@@ -8,48 +8,47 @@
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;height:100%;overflow:hidden}
 body{
-  background:radial-gradient(circle at 50% 44%,#8d1428 0%,#470711 48%,#160106 100%);
+  background:radial-gradient(circle at 50% 44%,#8d1428 0%,#470711 52%,#160106 100%);
 }
 .scene{
-  position:relative;width:100vw;height:100dvh;
+  position:relative;
+  width:100vw;height:100dvh;
   display:flex;align-items:center;justify-content:center;
-  perspective:1600px;overflow:hidden;
+  perspective:1600px;
+  overflow:hidden;
 }
 .book{
   position:relative;
-  width:min(92vw,560px);
-  height:min(90vh,820px);
+  width:min(94vw,560px);
+  height:min(94dvh,840px);
+  max-width:560px;
+  max-height:840px;
   transform-style:preserve-3d;
 }
 
-/* PÁGINAS ROJAS: ya no son blancas */
+/* The red/gold interior is completely hidden while the book is closed.
+   This prevents any rectangle/border from sticking out on mobile. */
 .page-block{
   position:absolute;
-  left:12%;top:2%;
-  width:86%;height:96%;
+  left:0;top:0;
+  width:100%;height:100%;
   z-index:1;
+  border-radius:5px;
   overflow:hidden;
-  border-radius:2px 7px 7px 2px;
+  opacity:0;
   background:
-    radial-gradient(circle at 45% 42%,#a91a35 0%,#86102a 38%,#68091f 72%,#4a0615 100%);
+    radial-gradient(circle at 50% 45%,#a91a35 0%,#851029 42%,#62091d 72%,#460512 100%);
   border:2px solid #d6a84f;
-  box-shadow:
-    10px 8px 22px rgba(0,0,0,.48),
-    inset 0 0 35px rgba(255,210,110,.20);
+  box-shadow:inset 0 0 38px rgba(255,210,110,.20);
+  transition:opacity .18s ease;
 }
-
-/* Elegante marco dorado */
+.page-block.visible{opacity:1}
 .page-block:before{
   content:"";
   position:absolute;
   inset:3%;
   border:2px solid rgba(238,195,98,.88);
-  box-shadow:
-    inset 0 0 22px rgba(255,215,120,.10),
-    0 0 10px rgba(0,0,0,.12);
 }
-
-/* Ornamento central sutil */
 .page-block:after{
   content:"✦   ❦   ✦";
   position:absolute;
@@ -59,26 +58,24 @@ body{
   color:rgba(246,207,116,.78);
   font-size:27px;
   letter-spacing:.28em;
-  text-shadow:0 0 14px rgba(255,190,70,.4);
 }
-
-/* Borde de hojas rojas/doradas en el canto */
 .page-edge{
   position:absolute;
-  right:0;top:2%;
-  width:10px;height:96%;
-  z-index:4;
-  background:
-    repeating-linear-gradient(
-      0deg,
-      #5a0718 0px,#a81934 3px,#e0b35b 5px,#7a0b20 7px
-    );
-  box-shadow:-2px 0 8px rgba(0,0,0,.35);
+  right:1.2%;top:3%;
+  width:8px;height:94%;
+  z-index:3;
+  opacity:0;
+  background:repeating-linear-gradient(
+    0deg,#5a0718 0,#a81934 3px,#e0b35b 5px,#7a0b20 7px
+  );
+  transition:opacity .18s ease;
 }
+.page-edge.visible{opacity:.9}
 
-/* Portada original */
+/* Original cover: unchanged */
 .cover{
-  position:absolute;left:0;top:0;
+  position:absolute;
+  left:0;top:0;
   width:100%;height:100%;
   object-fit:contain;
   transform-origin:left center;
@@ -97,56 +94,58 @@ body{
   filter:drop-shadow(12px 18px 22px rgba(0,0,0,.48));
 }
 
-/* Sombra de la tapa */
+/* Soft shadow under the opening cover */
 .turn-shadow{
   position:absolute;
-  left:8%;top:0;width:88%;height:100%;
-  z-index:11;pointer-events:none;
+  left:0;top:0;width:100%;height:100%;
+  z-index:11;
+  pointer-events:none;
   transform-origin:left center;
   opacity:0;
-  background:linear-gradient(90deg,rgba(0,0,0,.62),rgba(0,0,0,.20) 24%,transparent 55%);
+  background:linear-gradient(90deg,rgba(0,0,0,.58),rgba(0,0,0,.16) 28%,transparent 58%);
 }
 .cover.open + .turn-shadow{
   animation:shadowOpen 1.8s cubic-bezier(.65,.04,.18,1) forwards;
 }
 @keyframes shadowOpen{
   0%{opacity:0;transform:rotateY(0)}
-  18%{opacity:.62}
-  55%{opacity:.36}
-  100%{opacity:.18;transform:rotateY(-58deg)}
+  18%{opacity:.58}
+  55%{opacity:.34}
+  100%{opacity:.14;transform:rotateY(-58deg)}
 }
 
-/* El botón es invisible: funciona sobre el "ABRIR AQUÍ" de la portada */
+/* Invisible hit area: the visible "ABRIR AQUÍ" is part of the original image. */
 .tap{
   position:absolute;
-  left:28%;top:68%;
-  width:46%;height:14%;
+  left:27%;top:67%;
+  width:48%;height:15%;
   z-index:30;
   border:0;background:transparent;
   padding:0;margin:0;
   cursor:pointer;
   touch-action:manipulation;
 }
-.fade{
-  position:fixed;inset:0;z-index:50;
-  background:#170006;opacity:0;
-  pointer-events:none;transition:opacity .4s;
-}
-body.opening .fade{opacity:.18}
 
 @media(max-width:430px){
-  .book{width:96vw;height:94dvh}
+  .book{
+    width:100vw;
+    height:100dvh;
+  }
+  .page-block{
+    /* Exact viewport-sized backing, but hidden until opening. */
+    border-radius:0;
+  }
 }
-@media(max-height:650px){
-  .book{width:86vw;height:92dvh}
+@media(min-width:431px){
+  .book{width:min(94vw,560px);height:min(94vh,840px)}
 }
 </style>
 </head>
 <body>
 <div class="scene">
   <div class="book">
-    <div class="page-block"></div>
-    <div class="page-edge"></div>
+    <div class="page-block" id="pageBlock"></div>
+    <div class="page-edge" id="pageEdge"></div>
 
     <img id="cover" class="cover" src="libro-yina.png" alt="Yina — XV Años">
     <div class="turn-shadow"></div>
@@ -154,11 +153,12 @@ body.opening .fade{opacity:.18}
     <button id="tap" class="tap" aria-label="Abrir aquí"></button>
   </div>
 </div>
-<div class="fade"></div>
 
 <script>
 const cover=document.getElementById("cover");
 const tap=document.getElementById("tap");
+const pageBlock=document.getElementById("pageBlock");
+const pageEdge=document.getElementById("pageEdge");
 let opened=false;
 
 function openBook(e){
@@ -166,13 +166,20 @@ function openBook(e){
   if(opened)return;
   opened=true;
   tap.style.pointerEvents="none";
-  document.body.classList.add("opening");
+
+  // Only now reveal the red/gold interior.
+  pageBlock.classList.add("visible");
+  pageEdge.classList.add("visible");
+
+  // The original cover opens from the left like the reference.
   cover.classList.add("open");
 
+  // Directly to the real Canva invitation; no intermediate page.
   setTimeout(function(){
     window.location.href="https://xn--invitacin-isabel-y-david-nmc.my.canva.site/quince-a-os-yinna";
   },2050);
 }
+
 tap.addEventListener("click",openBook);
 tap.addEventListener("touchend",openBook,{passive:false});
 cover.addEventListener("click",openBook);
